@@ -1,6 +1,6 @@
 package de.bomzhi.jdt.exploration;
 
-import static de.bomzhi.jdt.exploration.matcher.TypeHasName.hasTypeWithName;
+import static de.bomzhi.jdt.exploration.matcher.TypeHasName.isTypeWithName;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -35,15 +35,15 @@ public class ExploreParser {
 	}
 	
 	@Test
-	public void enshureThatParsedElementIsAnCompilationUnit() throws Exception {
+	public void ensureThatParsedElementIsAnCompilationUnit() throws Exception {
 		assertThat(ast, is(CompilationUnit.class));
 	}
 
 	@Test
-	public void enshureThatCompilationUnitHasTypeCalledA() throws Exception {
+	public void ensureThatCompilationUnitHasTypeCalledA() throws Exception {
 		CompilationUnit cu = (CompilationUnit)ast;
 		List<AbstractTypeDeclaration> allTypes = cu.types();
 		assertThat(allTypes, is(notNullValue()));
-		assertThat(allTypes, hasItem(hasTypeWithName("A")));
+		assertThat(allTypes, hasItem(isTypeWithName("A")));
 	}
 }

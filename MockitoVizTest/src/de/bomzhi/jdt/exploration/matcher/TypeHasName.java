@@ -28,7 +28,7 @@ public class TypeHasName extends BaseMatcher<AbstractTypeDeclaration>{
 	}
 	
 	@Factory
-	public static TypeHasName hasTypeWithName(String typeName) {
+	public static TypeHasName isTypeWithName(String typeName) {
 		return new TypeHasName(typeName);
 	}
 }
