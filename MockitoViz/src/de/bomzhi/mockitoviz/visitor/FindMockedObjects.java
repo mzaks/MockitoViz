@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import de.bomzhi.mockitoviz.model.MockedObject;
+import de.bomzhi.mockitoviz.tools.ASTNodeHelper;
 
 public class FindMockedObjects extends ASTVisitor{
 	
@@ -25,15 +26,15 @@ public class FindMockedObjects extends ASTVisitor{
 	@Override
 	public boolean visit(MethodInvocation node) {
 		if(isMockingMethod(node)){
-			VariableDeclaration variableDecl = getParent(node, VariableDeclarationFragment.class);
+			VariableDeclaration variableDecl = ASTNodeHelper.getParent(node, VariableDeclarationFragment.class);
 			if(variableDecl != null){
 				String objectName = variableDecl.getName().getIdentifier();
-				VariableDeclarationStatement parent = getParent(variableDecl, VariableDeclarationStatement.class);
+				VariableDeclarationStatement parent = ASTNodeHelper.getParent(variableDecl, VariableDeclarationStatement.class);
 				Type type = parent.getType();
 				foundMocks.add(new MockedObject(objectName, bindingHandler.getTypeName(type)));
 				return true;
 			}
-			Assignment assignment = getParent(node, Assignment.class);
+			Assignment assignment = ASTNodeHelper.getParent(node, Assignment.class);
 			if(assignment!=null){
 				Expression leftHandSide = assignment.getLeftHandSide();
 				if(leftHandSide instanceof SimpleName){
@@ -49,16 +50,13 @@ public class FindMockedObjects extends ASTVisitor{
 	}
 
 	private boolean isMockingMethod(MethodInvocation node) {
-		return node.getName().getIdentifier().equals("mock") || node.getName().getIdentifier().equals("spy");
+		if (!(node.getName().getIdentifier().equals("mock") || node.getName()
+				.getIdentifier().equals("spy")))
+			return false;
+		return bindingHandler.isStaticMockitoMethod(node);
 	}
 
-	private <T extends ASTNode> T getParent(ASTNode node, Class<T> parentClass) {
-		ASTNode searchNode = node;
-		while(searchNode.getParent() != null && !parentClass.isInstance(searchNode.getParent())){
-			searchNode = searchNode.getParent();
-		}
-		return (T) searchNode.getParent();
-	}
+	
 
 	public List<MockedObject> getFoundMocks() {
 		return foundMocks;

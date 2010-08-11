@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -89,6 +90,7 @@ public class TestFindMockedObjects {
 
 	private void prepareBindingHandler(){
 		bindingHandler = mock(BindingHandler.class);
+		when(bindingHandler.isStaticMockitoMethod(any(MethodInvocation.class))).thenReturn(true);
 	}
 	
 	private void findMocks() {
